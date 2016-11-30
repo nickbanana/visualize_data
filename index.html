@@ -30,10 +30,20 @@
         media="screen">
     <link rel="stylesheet" href="./css/xeditable.css">
     <script src="./js/xeditable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.6.4/js/ngDialog.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.6.4/css/ngDialog-theme-default.min.css" rel="stylesheet" media="screen">
 </head>
+
+<script type="text/ng-template" id="form">
+    <div class="ngdialog-message">
+            <h1> test data </h1>
+    </div>
+    </script>
 
 <body ng-app="app">
     <script src="./script.js"></script>
+
+
     <!--<div style="width: 100%;">
             <div style="float:left; width: 70%">
                    hello
@@ -45,32 +55,18 @@
         </div>  play with panel -->
     <div style="width: 100%;" ng-controller="graphCtrl">
 
-        <div style="float:left; width: 70%">
-            <tree treedata="objlist2" on-click="onClick(item)"></tree>
-        </div>
-        <div style="float:right; width:30%;" ng-controller="detailPanel">
-            <h2>[[selection.domain]]</h2>
-				<form data-editable-form name="responseForm">
-					response:
-					<tags-input ng-model="selection.response" min-length="1" placeholder="add response">
-						<auto-complete source="loadTags($query)"></auto-complete>
-					</tags-input>
-					
-					concepts:
-					<tags-input ng-model="selection.concepts" min-length="1" placeholder="add concepts">
-						<auto-complete source="loadTags($query)"></auto-complete>
-					</tags-input>
-					
-					children:
-					<tags-input ng-model="selection.children" min-length="1" placeholder="add children">
-						<auto-complete source="loadTags($query)"></auto-complete>
-					</tags-input>        
-			</form>
+        <div>
+            <tree treedata="objlist2" on-click="onClick(item)" pop-up-fn="popupForm()"></tree>
         </div>
     </div>
 
 
 
 </body>
+
+
+
+
+
 
 </html>

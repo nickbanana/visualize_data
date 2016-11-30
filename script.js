@@ -27,7 +27,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 
 
 
-var app = angular.module("app", ["xeditable", "ngTagsInput"], function ($interpolateProvider)
+var app = angular.module("app", ["xeditable", "ngTagsInput", "ngDialog"], function ($interpolateProvider)
 { $interpolateProvider.startSymbol('[[').endSymbol(']]'); });
 
 app.filter('prettyJSON', function () {
@@ -276,6 +276,9 @@ app.directive("tree", function () {
                 .on('click', function (d) {
                     console.log(d);
                     console.log(d.links());
+                    scope.popUpCallback();
+
+
                     if (d.parent == null) {
                         console.log("root");
                     }
@@ -411,7 +414,7 @@ app.directive("tree", function () {
                 });
                 root = d3.hierarchy(data[0], function (d) { return d.children; });
                 root.children.forEach(collapse);
-                
+
 
                 var parent_link = d.parent.links();
                 //svg.selectAll('path.link')
@@ -425,7 +428,7 @@ app.directive("tree", function () {
                 //    }).remove();
 
                 update(d.parent);
-                
+
 
                 //svg.selectAll("g.node")
                 //.data(nodes, function(d){
@@ -459,7 +462,8 @@ app.directive("tree", function () {
         template: "",
         scope: {
             treedata: "=",
-            onClick: '&'
+            onClick: '&',
+            popUpCallback: '&popUpFn'
         },
         link: link
 
@@ -467,12 +471,16 @@ app.directive("tree", function () {
 });
 
 
-app.controller("graphCtrl", function graphCtrl($scope) {
+app.controller("graphCtrl", function graphCtrl($scope, ngDialog) {
 
     $scope.onClick = function (item) {
         $scope.$apply(function () {
             $scope.selection = item;
         })
+    }
+
+    $scope.popupForm = function () {
+        ngDialog.open({ template: 'popup.html', className: 'ngdialog-theme-default'});
     }
 
     $scope.objlist = [
@@ -977,6 +985,13 @@ app.controller("graphCtrl", function graphCtrl($scope) {
 }
 );
 
-app.controller("detailPanel", function detailPanel($scope) {
-    $scope.content = $scope.selection;
+app.controller('NgTagsCtrl', function ($scope, $http) {
+    $scope.contents = null;
+
 });
+
+
+
+
+
+
