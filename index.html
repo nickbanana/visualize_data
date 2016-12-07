@@ -21,52 +21,25 @@
 </style>
 
 <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script> -->
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/3.1.1/ng-tags-input.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/3.1.1/ng-tags-input.min.css" rel="stylesheet" media="screen">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/3.1.1/ng-tags-input.bootstrap.min.css" rel="stylesheet"
-        media="screen">
-    <link rel="stylesheet" href="./css/xeditable.css">
-    <script src="./js/xeditable.js"></script>
+    <link rel="stylesheet" href="./css/ngdialog.css">
+    <script src="./js/ng-tags-input.js"></script>
+    <link href="./css/ng-tags-input.css" rel="stylesheet">
+    <link href="./css/ng-tags-input.bootstrap.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.6.4/js/ngDialog.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.6.4/css/ngDialog-theme-default.min.css" rel="stylesheet" media="screen">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.6.4/css/ngDialog-theme-default.min.css" rel="stylesheet">
 </head>
-
-<script type="text/ng-template" id="form">
-    <div class="ngdialog-message">
-            <h1> test data </h1>
-    </div>
-    </script>
 
 <body ng-app="app">
     <script src="./script.js"></script>
+    <div style="width: 100%;" ng-controller="graphCtrl" ng-init="LoadData()">
 
+        <tree treedata="treelist" on-click="onClick(item)" pop-up-fn="popupForm(data)" add-fn="popupAddForm(data)" update-fn="setUpdateGraphFunction(FnInDirective)" ng-if"dataloaded"></tree>
 
-    <!--<div style="width: 100%;">
-            <div style="float:left; width: 70%">
-                   hello
-            </div>
-            <div style="float:right; width:30%; background-color:red">
-                bye
-            </div>
-
-        </div>  play with panel -->
-    <div style="width: 100%;" ng-controller="graphCtrl">
-
-        <div>
-            <tree treedata="objlist2" on-click="onClick(item)" pop-up-fn="popupForm()"></tree>
-        </div>
     </div>
-
-
-
 </body>
-
-
-
-
-
 
 </html>

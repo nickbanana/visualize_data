@@ -1,0 +1,23 @@
+<html>
+
+<body>
+    <div class="ngdialog-message">
+        
+        <form data-editable-form name="responseForm" >
+            domain:
+            <input type="text" ng-model="child.domain"></input>
+            <br>
+            response:
+            <tags-input ng-model="child.response" min-length="1" placeholder="add response">
+            </tags-input>
+
+            concepts:
+            <tags-input ng-model="child.concepts" min-length="1" placeholder="add concepts">
+            </tags-input>
+        </form>
+        <button ng-click="EmitSaveEvent()">Save</button>
+    </div>
+    
+</body>
+
+</html>
