@@ -104,10 +104,15 @@ function isEqual(a, b) {
 
 app.directive("tree", function () {
     function link(scope, element, attrs) {
+        //TODO shrink $watch into small area
+        
+
         scope.$watch('treedata', function (newValue, oldValue) {
             var data = [];
             angular.copy(scope.treedata, data);
-            console.log(scope.treedata);
+            console.log(data);
+
+        
             // fetch data from scope controller
             var draw_data = GenerateTree(data); // Generate the data for tree
             console.log(scope.treedata);
@@ -117,6 +122,10 @@ app.directive("tree", function () {
                 height = 800 - margin.top - margin.bottom;
             var treemap = d3.tree().size([width, height]);
             var root = d3.hierarchy(draw_data, function (d) { return d.children; });
+            var color = d3.scaleOrdinal(d3.schemeCategory20);
+            var color_domain = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+            color.domain(color_domain);
+
 
             // append the svg object to the body of the page
             // appends a 'group' element to 'svg'
@@ -126,15 +135,15 @@ app.directive("tree", function () {
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-            var zoom = d3.zoom().scaleExtent([0.1, 3]).on("zoom", zoomed);
+            //var zoom = d3.zoom().scaleExtent([0.1, 3]).on("zoom", zoomed);
 
-            var zoomer = svg.append("rect")
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
-                .style("fill", "none")
-                .style("pointer-events", "all")
-                .call(zoom);
-            zoomer.call(zoom.transform, d3.zoomIdentity.translate(margin.left, margin.top));
+            //var zoomer = svg.append("rect")
+            //    .attr("width", width + margin.right + margin.left)
+            //    .attr("height", height + margin.top + margin.bottom)
+            //    .style("fill", "none")
+            //    .style("pointer-events", "all")
+            //    .call(zoom);
+            //zoomer.call(zoom.transform, d3.zoomIdentity.translate(margin.left, margin.top));
 
             var i = 0,
                 duration = 750;
@@ -148,13 +157,16 @@ app.directive("tree", function () {
 
             // Collapse after the second level
 
-            console.log(root);
 
+            update(root);
+            console.log(root.children);
+            root.children.forEach(collapse);
             
             // Collapse the node and all it's children
             function collapse(d) {
-                console.log("enter collapse");
+                
                 if (d.children) {
+                    console.log("enter collapse");
                     d._children = d.children;
                     d._children.forEach(collapse);
                     d.children = null;
@@ -170,7 +182,7 @@ app.directive("tree", function () {
             }
 
             function update(source) {
-                var levelWidth = [1];
+                /*var levelWidth = [1];
                 var childCount = function (level, n) {
                     if (n.children && n.children.length > 0) {
                         if (levelWidth.length <= level + 1) {
@@ -187,7 +199,7 @@ app.directive("tree", function () {
                 };
                 childCount(0,root);
                 var newWidth = d3.max(levelWidth) * 40;
-                treemap = d3.tree().size([newWidth,height]);
+                treemap = d3.tree().size([newWidth,height]);*/
 
 
 
@@ -197,7 +209,6 @@ app.directive("tree", function () {
                 // Compute the new tree layout.
                 var nodes = treeData.descendants(),
                     links = treeData.descendants().slice(1);
-                var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 
                 // Normalize for fixed-depth.
@@ -390,32 +401,6 @@ app.directive("tree", function () {
                 }
             }
 
-            function zoomed() {
-                svg.select("g").attr("transform", d3.event.transform);
-            }
-
-            function centerNode(source) {
-                t = d3.zoomTransform(zoomer.node());
-                console.log(t);
-                x = source.x0;
-                y = source.y0;
-
-               // x = - x * t.k + width / 2;
-                //y = - y * t.k + height / 2;
-                console.log(x);
-                console.log(y);
-
-
-                svg.select("g").transition()
-                    .duration(duration)
-                    .attr("transform", "translate(" + x + "," + y + ") scale(" + t.k + ")")
-                    .on("end", function () { zoomer.call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(t.k)) });
-            }
-
-            update(root);
-            //centerNode(root);
-            console.log(root.children);
-            root.children.forEach(collapse);
 
 
 
@@ -460,6 +445,10 @@ app.directive("tree", function () {
 app.controller("graphCtrl", function graphCtrl($scope, $http, ngDialog) {
 
     $scope.dataloaded = false;
+    $scope.treelist = [];
+    $scope.treelist[0] = new Rule("",[],[],[]);
+
+
 
     $scope.LoadData = function () {
         $http.get('/data/tree.json').then(
