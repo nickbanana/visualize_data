@@ -38,8 +38,9 @@
     <div style="width: 100%;" ng-controller="graphCtrl" ng-init="LoadData()">
 
         <tree treedata="treelist" on-click="onClick(item)" pop-up-fn="popupForm(data)" add-fn="popupAddForm(data)" update-fn="setUpdateGraphFunction(FnInDirective)" ng-if"dataloaded"></tree>
-
+        <button ng-click="export_data()">輸出資料</button>
     </div>
+
 </body>
 
 </html>

@@ -105,66 +105,59 @@ function isEqual(a, b) {
 app.directive("tree", function () {
     function link(scope, element, attrs) {
         //TODO shrink $watch into small area
-        
+
 
         scope.$watch('treedata', function (newValue, oldValue) {
             var data = [];
             angular.copy(scope.treedata, data);
-            console.log(data);
 
-        
+            if (data[0].domain.length != 0) {
+                var draw_data = GenerateTree(data); // Generate the data for tree
+                console.log(scope.treedata);
+                console.log(data);
+                var margin = { top: 30, right: 90, bottom: 30, left: 90 };
+                var width = 1200 - margin.left - margin.right,
+                    height = 800 - margin.top - margin.bottom;
+                var treemap = d3.tree().size([width, height]);
+                var root = d3.hierarchy(draw_data, function (d) { return d.children; });
+                var color = d3.scaleOrdinal(d3.schemeCategory20);
+                var color_domain = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+                color.domain(color_domain);
+
+
+                // append the svg object to the body of the page
+                // appends a 'group' element to 'svg'
+                // moves the 'group' element to the top left margin
+                var svg = d3.select("tree").append("svg")
+                    .attr("width", width + margin.right + margin.left)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                var i = 0,
+                    duration = 750;
+
+                // declares a tree layout and assigns the size
+
+
+                // Assigns parent, children, height, depth
+                root.x0 = width / 2;
+                root.y0 = 0;
+
+                // Collapse after the second level
+
+
+                update(root);
+                console.log(root.children);
+                root.children.forEach(collapse);
+            }
             // fetch data from scope controller
-            var draw_data = GenerateTree(data); // Generate the data for tree
-            console.log(scope.treedata);
-            console.log(data);
-            var margin = { top: 30, right: 90, bottom: 30, left: 90 };
-            var width = 1200 - margin.left - margin.right,
-                height = 800 - margin.top - margin.bottom;
-            var treemap = d3.tree().size([width, height]);
-            var root = d3.hierarchy(draw_data, function (d) { return d.children; });
-            var color = d3.scaleOrdinal(d3.schemeCategory20);
-            var color_domain = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
-            color.domain(color_domain);
 
 
-            // append the svg object to the body of the page
-            // appends a 'group' element to 'svg'
-            // moves the 'group' element to the top left margin
-            var svg = d3.select("tree").append("svg")
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-            //var zoom = d3.zoom().scaleExtent([0.1, 3]).on("zoom", zoomed);
 
-            //var zoomer = svg.append("rect")
-            //    .attr("width", width + margin.right + margin.left)
-            //    .attr("height", height + margin.top + margin.bottom)
-            //    .style("fill", "none")
-            //    .style("pointer-events", "all")
-            //    .call(zoom);
-            //zoomer.call(zoom.transform, d3.zoomIdentity.translate(margin.left, margin.top));
-
-            var i = 0,
-                duration = 750;
-
-            // declares a tree layout and assigns the size
-
-
-            // Assigns parent, children, height, depth
-            root.x0 = width / 2;
-            root.y0 = 0;
-
-            // Collapse after the second level
-
-
-            update(root);
-            console.log(root.children);
-            root.children.forEach(collapse);
-            
             // Collapse the node and all it's children
             function collapse(d) {
-                
+
                 if (d.children) {
                     console.log("enter collapse");
                     d._children = d.children;
@@ -446,7 +439,8 @@ app.controller("graphCtrl", function graphCtrl($scope, $http, ngDialog) {
 
     $scope.dataloaded = false;
     $scope.treelist = [];
-    $scope.treelist[0] = new Rule("",[],[],[]);
+    $scope.treelist[0] = new Rule("", [], [], []);
+    $scope.outputdata = {};
 
 
 
@@ -455,7 +449,7 @@ app.controller("graphCtrl", function graphCtrl($scope, $http, ngDialog) {
             function (response) {
                 $scope.treelist = response.data;
                 $scope.dataloaded = true;
-                console.log(response);
+                console.log($scope.treelist);
             },
             function (response) {
                 console.log(response);
@@ -561,12 +555,30 @@ app.controller("graphCtrl", function graphCtrl($scope, $http, ngDialog) {
 
     ];
 
+
+    $scope.export_data = function () {
+        $scope.outputdata.ID = $scope.treelist[0].domain;
+        $scope.outputdata.content = $scope.treelist;
+
+
+
+        console.log($scope.outputdata);
+    }
+
 }
 );
 
 
 app.controller("dialogCtrl", function dialogCtrl($scope) {
     $scope.selection = $scope.ngDialogData.selection;
+    $scope.noteditable = true;
+
+    $scope.checked = function () {
+        if ($scope.noteditable)
+            $scope.noteditable = false;
+        else
+            $scope.noteditable = true;
+    }
 })
 
 app.controller("dialogAddCtrl", function dialogAddCtrl($scope, $rootScope) {

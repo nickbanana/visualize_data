@@ -5,13 +5,14 @@
         [[selection.domain]]
         <form data-editable-form name="responseForm" >
             response:
-            <tags-input ng-model="selection.response" min-length="1" placeholder="add response" disabled="true">
+            <tags-input ng-model="selection.response" min-length="1" placeholder="add response" ng-disabled="noteditable">
             </tags-input>
 
             concepts:
-            <tags-input ng-model="selection.concepts" min-length="1" placeholder="add concepts" disabled="true">
+            <tags-input ng-model="selection.concepts" min-length="1" placeholder="add concepts" ng-disabled="noteditable">
             </tags-input>
         </form>
+        <button ng-click="checked()">點選以編輯</button>
     </div>
     
 </body>
